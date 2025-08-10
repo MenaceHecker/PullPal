@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { AuthButton } from '@/components/auth-button'
 import { Code, GitPullRequest, MessageSquare, Zap } from 'lucide-react'
@@ -9,10 +8,15 @@ export default function Home() {
       <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <nav className="flex justify-between items-center mb-16">
-          <div className="flex items-center space-x-2">
-            <Code className="h-8 w-8 text-purple-400" />
-            <span className="text-2xl font-bold text-white">PullPal</span>
-          </div>
+          <div className="flex items-center space-x-3">
+            <img
+              src="/logo.png"
+              alt="PullPal Logo"
+              className="h-20 w-auto object-contain"
+            />
+  <span className="text-2xl font-bold text-white">PullPal</span>
+</div>
+
           <AuthButton />
         </nav>
 

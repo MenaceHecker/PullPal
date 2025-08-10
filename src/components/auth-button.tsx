@@ -3,6 +3,7 @@
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Github } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 interface AuthButtonProps {
   variant?: 'default' | 'hero'
@@ -10,15 +11,34 @@ interface AuthButtonProps {
 
 export function AuthButton({ variant = 'default' }: AuthButtonProps) {
   const { data: session, status } = useSession()
+  const [mounted, setMounted] = useState(false)
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    // Return a placeholder that matches the server-rendered content
+    return (
+      <Button disabled size={variant === 'hero' ? 'lg' : 'default'}>
+        Loading...
+      </Button>
+    )
+  }
 
   if (status === 'loading') {
-    return <Button disabled>Loading...</Button>
+    return (
+      <Button disabled size={variant === 'hero' ? 'lg' : 'default'}>
+        Loading...
+      </Button>
+    )
   }
 
   if (session) {
     return (
       <div className="flex items-center space-x-4">
-        <span className="text-white">Welcome, {session.user?.name}</span>
+        <span className="text-white hidden sm:inline">Welcome, {session.user?.name}</span>
         <Button variant="outline" onClick={() => signOut()}>
           Sign Out
         </Button>

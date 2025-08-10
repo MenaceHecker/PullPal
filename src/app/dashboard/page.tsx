@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { RepoGrid } from '@/components/repo-grid'
+import { RepoGrid } from '../../components/repo-grid'
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions)

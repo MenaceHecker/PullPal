@@ -1,3 +1,4 @@
+// Fix 1: Update lib/auth.ts with proper configuration
 import { NextAuthOptions } from 'next-auth'
 import GitHubProvider from 'next-auth/providers/github'
 
@@ -21,12 +22,21 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async session({ session, token }) {
-      session.accessToken = token.accessToken as string
-      return session
+      // Ensure we have a properly typed session
+      return {
+        ...session,
+        accessToken: token.accessToken as string
+      }
     },
   },
   pages: {
     signIn: '/auth/signin',
     error: '/auth/error',
   },
+  // Add these important configurations
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: 'jwt',
+  },
+  debug: process.env.NODE_ENV === 'development',
 }

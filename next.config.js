@@ -5,11 +5,11 @@ const nextConfig = {
       rules: {
         '*.css': {
           loaders: ['@tailwindcss/vite'],
-          as: '*.css',
+          as: 'css',
         },
       },
     },
   },
-}
+};
 
-export default nextConfig; 
+module.exports = nextConfig;

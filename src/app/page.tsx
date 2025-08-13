@@ -32,7 +32,7 @@ export default function Home() {
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 feature-grid">
           <FeatureCard
             icon={<MessageSquare className="h-8 w-8 text-blue-400" />}
             title="Context-Aware Chat"

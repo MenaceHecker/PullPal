@@ -19,7 +19,6 @@ export function AuthButton({ variant = 'default' }: AuthButtonProps) {
   }, [])
 
   if (!mounted) {
-    // Return a placeholder that matches the server-rendered content
     return (
       <Button disabled size={variant === 'hero' ? 'lg' : 'default'}>
         Loading...
@@ -38,8 +37,14 @@ export function AuthButton({ variant = 'default' }: AuthButtonProps) {
   if (session) {
     return (
       <div className="flex items-center space-x-4">
-        <span className="text-white hidden sm:inline">Welcome, {session.user?.name}</span>
-        <Button variant="outline" onClick={() => signOut()}>
+        <span className="text-white hidden sm:inline">
+          Welcome, {session.user?.name}
+        </span>
+        <Button
+          variant="outline"
+          onClick={() => signOut()}
+          className="cursor-pointer"
+        >
           Sign Out
         </Button>
       </div>
@@ -50,7 +55,7 @@ export function AuthButton({ variant = 'default' }: AuthButtonProps) {
     <Button
       onClick={() => signIn('github')}
       size={variant === 'hero' ? 'lg' : 'default'}
-      className={variant === 'hero' ? 'text-lg px-8 py-3' : ''}
+      className={`${variant === 'hero' ? 'text-lg px-8 py-3' : ''} cursor-pointer`}
     >
       <Github className="mr-2 h-4 w-4" />
       Sign in with GitHub

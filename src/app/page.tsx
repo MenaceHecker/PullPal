@@ -28,7 +28,6 @@ export default function Home() {
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             Understand your codebase, get smart refactor suggestions, and ship clean PRs faster than ever.
           </p>
-          <AuthButton variant="hero" />
         </div>
 
         {/* Features Grid */}

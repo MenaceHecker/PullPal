@@ -50,7 +50,7 @@ export default function Home() {
           <FeatureCard
             icon={<Zap className="h-8 w-8 text-yellow-400" />}
             title="Multi-Language"
-            description="Support for JavaScript, TypeScript, Python, Java, and more languages."
+            description="Support for JavaScript, TypeScript, Kotlin, Python, Java, and more languages."
           />
         </div>
       </div>

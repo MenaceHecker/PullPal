@@ -35,7 +35,7 @@ export default function Home() {
           <FeatureCard
             icon={<MessageSquare className="h-8 w-8 text-blue-400" />}
             title="Context-Aware Chat"
-            description="Ask questions about your code and get intelligent answers based on your entire codebase."
+            description="Ask questions about your code and get smart answers based on your entire codebase."
           />
           <FeatureCard
             icon={<Code className="h-8 w-8 text-green-400" />}

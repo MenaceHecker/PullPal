@@ -64,4 +64,9 @@ export default function RepoSelector() {
     repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     repo.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+    const handleRepoSelect = (repo: Repository) => {
+    setSelectedRepo(repo);
+    // TODO: Make API call to index the repository
+    console.log(`Selected repository: ${repo.full_name}`);
+  };
 }

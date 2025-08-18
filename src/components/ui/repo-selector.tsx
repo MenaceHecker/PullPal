@@ -18,4 +18,46 @@ export default function RepoSelector() {
   const [repos, setRepos] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null); }
+  const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
+    useEffect(() => {
+    // Simulate API call to fetch repositories
+    setTimeout(() => {
+      setRepos([
+        {
+          id: 1,
+          name: "awesome-project",
+          full_name: "johndoe/awesome-project",
+          description: "A full-stack web application built with React and Node.js",
+          language: "JavaScript",
+          stargazers_count: 42,
+          forks_count: 8,
+          updated_at: "2024-08-15T10:30:00Z",
+          private: false
+        },
+        {
+          id: 2,
+          name: "ml-pipeline",
+          full_name: "johndoe/ml-pipeline",
+          description: "Machine learning data processing pipeline",
+          language: "Python",
+          stargazers_count: 128,
+          forks_count: 23,
+          updated_at: "2024-08-10T14:20:00Z",
+          private: true
+        },
+        {
+          id: 3,
+          name: "mobile-app",
+          full_name: "johndoe/mobile-app",
+          description: "Cross-platform mobile application using React Native",
+          language: "TypeScript",
+          stargazers_count: 67,
+          forks_count: 12,
+          updated_at: "2024-08-12T09:45:00Z",
+          private: false
+        }
+      ]);
+      setLoading(false);
+    }, 1000);
+  }, []);
+}

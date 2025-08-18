@@ -60,4 +60,8 @@ export default function RepoSelector() {
       setLoading(false);
     }, 1000);
   }, []);
+   const filteredRepos = repos.filter(repo =>
+    repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    repo.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 }

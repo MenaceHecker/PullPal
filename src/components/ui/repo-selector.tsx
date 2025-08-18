@@ -14,3 +14,8 @@ interface Repository {
   updated_at: string;
   private: boolean;
 }
+export default function RepoSelector() {
+  const [repos, setRepos] = useState<Repository[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null); }

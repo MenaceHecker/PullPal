@@ -69,4 +69,11 @@ export default function RepoSelector() {
     // TODO: Make API call to index the repository
     console.log(`Selected repository: ${repo.full_name}`);
   };
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
 }

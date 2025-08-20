@@ -1,9 +1,9 @@
-import React from 'react'
+import RepoSelector from "@/components/repo/repo-selector";
 
-const page = () => {
+export default function ReposPage() {
   return (
-    <div>page</div>
-  )
+    <div>
+      <RepoSelector />
+    </div>
+  );
 }
-
-export default page

@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { RepoGrid } from '../../components/repo-grid'
-import RepoSelector from '@/components/repo/repo-selector'
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions)
@@ -18,7 +17,6 @@ export default async function Dashboard() {
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Your Repositories</h1>
             <p className="text-slate-600 mt-2">Select a repository to start chatting with your code</p>
-            <RepoSelector />
           </div>
         </div>
         <RepoGrid />

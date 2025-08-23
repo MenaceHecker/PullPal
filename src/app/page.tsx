@@ -1,8 +1,13 @@
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { AuthButton } from '@/components/auth-button'
 import { Code, GitPullRequest, MessageSquare, Zap } from 'lucide-react'
+import Link from 'next/link'
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(authOptions)
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <div className="container mx-auto px-4 py-16">
@@ -14,10 +19,38 @@ export default function Home() {
               alt="PullPal Logo"
               className="h-20 w-auto object-contain"
             />
-  <span className="text-2xl font-bold text-white">PullPal</span>
-</div>
+            <span className="text-2xl font-bold text-white">PullPal</span>
+          </div>
 
-          <AuthButton />
+          <div className="flex items-center space-x-4">
+            {session ? (
+              // User is logged in - show dashboard button and user info
+              <>
+                <div className="text-right mr-4 hidden sm:block">
+                  <p className="text-sm text-gray-300">Welcome back,</p>
+                  <p className="text-white font-medium">
+                    {session.user?.name || session.user?.email}
+                  </p>
+                </div>
+                {session.user?.image && (
+                  <img 
+                    src={session.user.image} 
+                    alt="Profile" 
+                    className="w-10 h-10 rounded-full border-2 border-purple-500"
+                  />
+                )}
+                <Link
+                  href="/dashboard"
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                >
+                  Go to Dashboard
+                </Link>
+              </>
+            ) : (
+              // User is not logged in - show auth button
+              <AuthButton />
+            )}
+          </div>
         </nav>
 
         {/* Hero Section */}
@@ -28,6 +61,25 @@ export default function Home() {
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             Understand your codebase, get smart refactor suggestions, and ship clean PRs faster than ever.
           </p>
+          
+          {/* Call to Action based on auth status */}
+          {session ? (
+            <div className="space-y-4">
+              <p className="text-lg text-green-400 mb-4">
+                🎉 You're all set! Ready to analyze your repositories?
+              </p>
+              <Link
+                href="/dashboard"
+                className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              >
+                Start Analyzing Code →
+              </Link>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <AuthButton />
+            </div>
+          )}
         </div>
 
         {/* Features Grid */}
@@ -53,6 +105,24 @@ export default function Home() {
             description="Support for JavaScript, TypeScript, Kotlin, Python, Java, and more languages."
           />
         </div>
+
+        {/* Additional CTA Section for logged-in users */}
+        {session && (
+          <div className="text-center bg-slate-800/50 rounded-lg p-8 border border-slate-700">
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Ready to Get Started?
+            </h2>
+            <p className="text-gray-300 mb-6">
+              Connect your GitHub repositories and start getting AI-powered insights into your code.
+            </p>
+            <Link
+              href="/dashboard"
+              className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            >
+              Go to Dashboard →
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )

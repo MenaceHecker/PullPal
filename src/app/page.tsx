@@ -24,7 +24,7 @@ export default async function Home() {
 
           <div className="flex items-center space-x-4">
             {session ? (
-              // User is logged in - show dashboard button and user info
+              // User is logged in - show dashboard button, user info, and sign out
               <>
                 <div className="text-right mr-4 hidden sm:block">
                   <p className="text-sm text-gray-300">Welcome back,</p>
@@ -39,12 +39,20 @@ export default async function Home() {
                     className="w-10 h-10 rounded-full border-2 border-purple-500"
                   />
                 )}
-                <Link
-                  href="/dashboard"
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200"
-                >
-                  Go to Dashboard
-                </Link>
+                <div className="flex items-center space-x-3">
+                  <Link
+                    href="/dashboard"
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/api/auth/signout"
+                    className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+                  >
+                    Sign Out
+                  </Link>
+                </div>
               </>
             ) : (
               // User is not logged in - show auth button

@@ -1,9 +1,17 @@
-import React from 'react'
+'use client';
 
-const repo-selector-wrapper = () => {
-  return (
-    <div>repo-selector-wrapper</div>
-  )
+import { SessionProvider } from 'next-auth/react';
+import { Session } from 'next-auth';
+import RepoSelector from './repo-selector';
+
+interface RepoSelectorWrapperProps {
+  session: Session;
 }
 
-export default repo-selector-wrapper
+export default function RepoSelectorWrapper({ session }: RepoSelectorWrapperProps) {
+  return (
+    <SessionProvider session={session}>
+      <RepoSelector />
+    </SessionProvider>
+  );
+}

@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, GitFork, Star, Calendar, Code } from 'lucide-react';
+import { Search, GitFork, Star, Calendar, Code, AlertCircle } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface Repository {
   id: number;
@@ -14,61 +16,104 @@ interface Repository {
   updated_at: string;
   private: boolean;
 }
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+
 const RepoSelector = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [repos, setRepos] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
-    useEffect(() => {
-    // Simulate API call to fetch repositories
-    setTimeout(() => {
-      setRepos([
-        {
-          id: 1,
-          name: "awesome-project",
-          full_name: "johndoe/awesome-project",
-          description: "A full-stack web application built with React and Node.js",
-          language: "JavaScript",
-          stargazers_count: 42,
-          forks_count: 8,
-          updated_at: "2024-08-15T10:30:00Z",
-          private: false
-        },
-        {
-          id: 2,
-          name: "ml-pipeline",
-          full_name: "johndoe/ml-pipeline",
-          description: "Machine learning data processing pipeline",
-          language: "Python",
-          stargazers_count: 128,
-          forks_count: 23,
-          updated_at: "2024-08-10T14:20:00Z",
-          private: true
-        },
-        {
-          id: 3,
-          name: "mobile-app",
-          full_name: "johndoe/mobile-app",
-          description: "Cross-platform mobile application using React Native",
-          language: "TypeScript",
-          stargazers_count: 67,
-          forks_count: 12,
-          updated_at: "2024-08-12T09:45:00Z",
-          private: false
-        }
-      ]);
+  const [indexing, setIndexing] = useState(false);
+
+  useEffect(() => {
+    if (status === 'loading') return; // Still loading session
+    
+    if (!session) {
+      router.push('/api/auth/signin');
+      return;
+    }
+
+    fetchRepositories();
+  }, [session, status, router]);
+
+  const fetchRepositories = async () => {
+    if (!session?.accessToken) {
+      setError('No access token available');
       setLoading(false);
-    }, 1000);
-  }, []);
-   const filteredRepos = repos.filter(repo =>
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetch(`${BACKEND_URL}/api/repos`, {
+        headers: {
+          'Authorization': `Bearer ${session.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch repositories: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setRepos(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Error fetching repositories:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch repositories');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredRepos = repos.filter(repo =>
     repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     repo.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-    const handleRepoSelect = (repo: Repository) => {
+
+  const handleRepoSelect = async (repo: Repository) => {
+    if (!session?.accessToken) {
+      setError('No access token available');
+      return;
+    }
+
     setSelectedRepo(repo);
-    // TODO: Make API call to index the repository
-    console.log(`Selected repository: ${repo.full_name}`);
+    setIndexing(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/repos/${repo.full_name}/index`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to index repository: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Indexing started:', result);
+      
+      // Redirect to chat interface (you'll create this next)
+      router.push(`/dashboard/repos/${repo.full_name.replace('/', '--')}`);
+    } catch (err) {
+      console.error('Error indexing repository:', err);
+      setError(err instanceof Error ? err.message : 'Failed to index repository');
+      setSelectedRepo(null);
+    } finally {
+      setIndexing(false);
+    }
   };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -76,28 +121,58 @@ const RepoSelector = () => {
       year: 'numeric'
     });
   };
-   const getLanguageColor = (language: string) => {
+
+  const getLanguageColor = (language: string) => {
     const colors: { [key: string]: string } = {
       JavaScript: 'bg-yellow-400',
       TypeScript: 'bg-blue-500',
       Python: 'bg-green-500',
       Java: 'bg-orange-500',
       'C++': 'bg-purple-500',
-      Go: 'bg-cyan-500'
+      Go: 'bg-cyan-500',
+      HTML: 'bg-red-500',
+      CSS: 'bg-blue-400',
+      PHP: 'bg-indigo-500',
+      Ruby: 'bg-red-600',
+      Swift: 'bg-orange-400',
+      Kotlin: 'bg-purple-600',
+      Rust: 'bg-amber-600',
     };
     return colors[language] || 'bg-gray-400';
   };
-   if (loading) {
+
+  if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
-          <p className="text-purple-300">Loading your repositories...</p>
+          <p className="text-purple-300">
+            {status === 'loading' ? 'Loading...' : 'Loading your repositories...'}
+          </p>
         </div>
       </div>
     );
   }
-   return (
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <AlertCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Error Loading Repositories</h2>
+          <p className="text-red-300 mb-6">{error}</p>
+          <button
+            onClick={fetchRepositories}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
@@ -107,6 +182,9 @@ const RepoSelector = () => {
           </h1>
           <p className="text-purple-300 text-lg">
             Select a repository to start your AI-powered code analysis
+          </p>
+          <p className="text-sm text-slate-400 mt-2">
+            Found {repos.length} repositories
           </p>
         </div>
 
@@ -129,8 +207,8 @@ const RepoSelector = () => {
               key={repo.id}
               className={`bg-slate-800 border border-slate-700 rounded-lg p-6 hover:border-purple-500 transition-all duration-300 cursor-pointer transform hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 ${
                 selectedRepo?.id === repo.id ? 'border-purple-500 shadow-lg shadow-purple-500/30' : ''
-              }`}
-              onClick={() => handleRepoSelect(repo)}
+              } ${indexing && selectedRepo?.id === repo.id ? 'opacity-75' : ''}`}
+              onClick={() => !indexing && handleRepoSelect(repo)}
             >
               {/* Repo Header */}
               <div className="flex items-start justify-between mb-3">
@@ -181,7 +259,15 @@ const RepoSelector = () => {
               </div>
 
               {/* Select Button */}
-              {selectedRepo?.id === repo.id ? (
+              {indexing && selectedRepo?.id === repo.id ? (
+                <button 
+                  disabled 
+                  className="w-full mt-4 bg-purple-600 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center"
+                >
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Indexing...
+                </button>
+              ) : selectedRepo?.id === repo.id ? (
                 <button className="w-full mt-4 bg-purple-600 text-white py-2 px-4 rounded-lg font-medium">
                   Selected ✓
                 </button>
@@ -192,6 +278,7 @@ const RepoSelector = () => {
                     e.stopPropagation();
                     handleRepoSelect(repo);
                   }}
+                  disabled={indexing}
                 >
                   <Code className="inline h-4 w-4 mr-2" />
                   Analyze Repository
@@ -202,7 +289,7 @@ const RepoSelector = () => {
         </div>
 
         {/* No Results */}
-        {filteredRepos.length === 0 && (
+        {filteredRepos.length === 0 && repos.length > 0 && (
           <div className="text-center py-12">
             <Code className="h-16 w-16 text-purple-400 mx-auto mb-4 opacity-50" />
             <h3 className="text-xl font-semibold text-white mb-2">No repositories found</h3>
@@ -210,10 +297,28 @@ const RepoSelector = () => {
           </div>
         )}
 
+        {/* No Repos */}
+        {repos.length === 0 && !loading && (
+          <div className="text-center py-12">
+            <Code className="h-16 w-16 text-purple-400 mx-auto mb-4 opacity-50" />
+            <h3 className="text-xl font-semibold text-white mb-2">No repositories found</h3>
+            <p className="text-purple-300">Make sure you have repositories in your GitHub account</p>
+            <button
+              onClick={fetchRepositories}
+              className="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+            >
+              Refresh
+            </button>
+          </div>
+        )}
+
         {/* Continue Button */}
-        {selectedRepo && (
+        {selectedRepo && !indexing && (
           <div className="fixed bottom-6 right-6">
-            <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+            <button 
+              onClick={() => handleRepoSelect(selectedRepo)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            >
               Continue with {selectedRepo.name} →
             </button>
           </div>

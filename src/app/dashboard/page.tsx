@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import RepoSelector from '@/components/repo/repo-selector'
+import RepoSelectorWrapper from '@/components/repo/repo-selector-wrapper'
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions)
@@ -35,9 +35,8 @@ export default async function Dashboard() {
           </div>
         </div>
       </div>
-      
-      {/* Repository Selector */}
-      <RepoSelector />
+    
+      <RepoSelectorWrapper session={session} />
     </div>
   )
 }

@@ -24,7 +24,6 @@ export default async function Home() {
 
           <div className="flex items-center space-x-4">
             {session ? (
-              // User is logged in - show dashboard button, user info, and sign out
               <>
                 <div className="text-right mr-4 hidden sm:block">
                   <p className="text-sm text-gray-300">Welcome back,</p>
@@ -55,7 +54,6 @@ export default async function Home() {
                 </div>
               </>
             ) : (
-              // User is not logged in - show auth button
               <AuthButton />
             )}
           </div>
@@ -67,7 +65,7 @@ export default async function Home() {
             Your AI Pair Programmer
           </h1>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Understand your codebase, get smart refactor suggestions, and ship clean PRs faster than ever.
+            Understand every codebase, get smart refactor suggestions, and ship clean PRs faster than ever.
           </p>
           
           {/* Call to Action based on auth status */}

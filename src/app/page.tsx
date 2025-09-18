@@ -65,7 +65,7 @@ export default async function Home() {
             Your AI Pair Programmer
           </h1>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Understand every codebase, then get smart refactor suggestions, and then ship clean PRs faster than ever.
+            Understand every codebase, then get smart refactor suggestions, and ship clean PRs faster than ever.
           </p>
           
           {/* Call to Action based on auth status */}

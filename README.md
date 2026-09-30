@@ -54,7 +54,20 @@ uvicorn app.main:app --reload
 ```
 Backend runs at `http://localhost:8000`. Check `GET /health`.
 
-### 3. Frontend
+### 3. Simulated system
+```bash
+cd simulated-system
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt
+uvicorn app.main:app --reload --port 9000
+```
+Runs at `http://localhost:9000`. This is the fake system Sentra investigates:
+three demo services (`checkout-service`, `payments-service`, `inventory-service`)
+that continuously emit logs, metrics, and deploy history on their own. Check
+`GET /services` to see them, and `POST /scenarios/checkout-500s/inject` to
+trigger a reproducible incident (`GET /scenarios` lists what's available).
+
+### 4. Frontend
 ```bash
 cd frontend
 npm install
@@ -63,7 +76,7 @@ npm run dev
 ```
 Frontend runs at `http://localhost:3000`.
 
-### 4. Pre-commit hooks
+### 5. Pre-commit hooks
 ```bash
 pip install pre-commit
 pre-commit install
@@ -73,7 +86,7 @@ pre-commit install
 
 - [x] Phase 0 — Scope & repository setup
 - [x] Phase 1 — Database + auth
-- [ ] Phase 2 — Simulated system
+- [x] Phase 2 — Simulated system
 - [ ] Phase 3 — Ingestion pipeline
 - [ ] Phase 4 — Tool layer
 - [ ] Phase 5 — Agent orchestrator

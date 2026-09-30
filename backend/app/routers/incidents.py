@@ -33,12 +33,7 @@ def list_incidents(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> list[Incident]:
-    return (
-        db.query(Incident)
-        .filter(Incident.user_id == current_user.id)
-        .order_by(Incident.created_at.desc())
-        .all()
-    )
+    return db.query(Incident).filter(Incident.user_id == current_user.id).order_by(Incident.created_at.desc()).all()
 
 
 @router.get("/{incident_id}", response_model=IncidentOut)

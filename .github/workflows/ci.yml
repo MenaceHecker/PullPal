@@ -12,6 +12,22 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: sentra
+          POSTGRES_PASSWORD: sentra
+          POSTGRES_DB: sentra
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sentra -d sentra"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://sentra:sentra@localhost:5432/sentra
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -22,6 +38,7 @@ jobs:
       - run: pip install -r requirements.txt -r requirements-dev.txt
       - run: ruff check .
       - run: ruff format --check .
+      - run: alembic upgrade head
       - run: pytest -q
 
   frontend:

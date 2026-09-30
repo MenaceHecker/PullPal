@@ -49,6 +49,7 @@ cd backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 cp ../.env.example ../.env   # fill in secrets
+alembic upgrade head          # creates the schema
 uvicorn app.main:app --reload
 ```
 Backend runs at `http://localhost:8000`. Check `GET /health`.
@@ -71,7 +72,7 @@ pre-commit install
 ## Roadmap
 
 - [x] Phase 0 — Scope & repository setup
-- [ ] Phase 1 — Database + auth
+- [x] Phase 1 — Database + auth
 - [ ] Phase 2 — Simulated system
 - [ ] Phase 3 — Ingestion pipeline
 - [ ] Phase 4 — Tool layer

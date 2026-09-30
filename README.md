@@ -43,18 +43,7 @@ prompting the model to behave. See `docs/spec.md` for the full design.
 docker compose up -d
 ```
 
-### 2. Backend
-```bash
-cd backend
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements-dev.txt
-cp ../.env.example ../.env   # fill in secrets
-alembic upgrade head          # creates the schema
-uvicorn app.main:app --reload
-```
-Backend runs at `http://localhost:8000`. Check `GET /health`.
-
-### 3. Simulated system
+### 2. Simulated system
 ```bash
 cd simulated-system
 python -m venv .venv && source .venv/bin/activate
@@ -66,6 +55,24 @@ three demo services (`checkout-service`, `payments-service`, `inventory-service`
 that continuously emit logs, metrics, and deploy history on their own. Check
 `GET /services` to see them, and `POST /scenarios/checkout-500s/inject` to
 trigger a reproducible incident (`GET /scenarios` lists what's available).
+Start this before the backend, since the backend ingests from it.
+
+### 3. Backend
+```bash
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt
+cp ../.env.example ../.env   # fill in secrets
+alembic upgrade head          # creates the schema
+uvicorn app.main:app --reload
+```
+Backend runs at `http://localhost:8000`. Check `GET /health`. On startup it
+seeds the three services, ingests the runbooks in `backend/runbooks/` into
+pgvector, and starts pulling logs, metrics, and deploys from the simulated
+system every few seconds. `OPENAI_API_KEY` is optional: without one,
+runbook embeddings fall back to a deterministic hash-based embedding
+(`app/embeddings.py`), so search still works with no setup, just with
+keyword-level rather than semantic matching.
 
 ### 4. Frontend
 ```bash
@@ -87,7 +94,7 @@ pre-commit install
 - [x] Phase 0 — Scope & repository setup
 - [x] Phase 1 — Database + auth
 - [x] Phase 2 — Simulated system
-- [ ] Phase 3 — Ingestion pipeline
+- [x] Phase 3 — Ingestion pipeline
 - [ ] Phase 4 — Tool layer
 - [ ] Phase 5 — Agent orchestrator
 - [ ] Phase 6 — Approval workflow

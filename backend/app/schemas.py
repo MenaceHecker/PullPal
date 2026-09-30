@@ -41,3 +41,19 @@ class IncidentOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class RunbookDocumentOut(BaseModel):
+    id: uuid.UUID
+    title: str
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class RunbookSearchResultOut(BaseModel):
+    document_title: str
+    start_line: int
+    end_line: int
+    content: str
+    distance: float

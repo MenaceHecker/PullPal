@@ -1,14 +1,22 @@
-from collections.abc import Callable, Generator
+import os
 
-import app.models  # noqa: F401 -- registers every table on Base.metadata before create_all
-import pytest
-import sqlalchemy as sa
-from app.config import get_settings
-from app.db import Base, get_db
-from app.main import app
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+# Must be set before anything imports app.config, since get_settings() is
+# cached: whoever calls it first wins for the rest of the process. Keeps
+# tests from starting the background ingestion loop or touching the real
+# dev database at TestClient startup.
+os.environ.setdefault("ENABLE_BACKGROUND_JOBS", "false")
+
+from collections.abc import Callable, Generator  # noqa: E402
+
+import app.models  # noqa: E402,F401 -- registers every table on Base.metadata before create_all
+import pytest  # noqa: E402
+import sqlalchemy as sa  # noqa: E402
+from app.config import get_settings  # noqa: E402
+from app.db import Base, get_db  # noqa: E402
+from app.main import app  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
+from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy.orm import Session  # noqa: E402
 
 settings = get_settings()
 

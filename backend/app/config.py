@@ -22,6 +22,12 @@ class Settings(BaseSettings):
 
     sim_system_base_url: str = "http://localhost:9000"
 
+    # Background jobs (ingestion from the simulated system, runbook seeding).
+    # Tests set this to false so they never touch the real dev database or
+    # depend on the simulated system being up.
+    enable_background_jobs: bool = True
+    ingestion_interval_seconds: float = 10.0
+
     backend_cors_origins: str = "http://localhost:3000"
 
     @property

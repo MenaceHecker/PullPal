@@ -95,7 +95,7 @@ pre-commit install
 - [x] Phase 1 — Database + auth
 - [x] Phase 2 — Simulated system
 - [x] Phase 3 — Ingestion pipeline
-- [ ] Phase 4 — Tool layer
+- [x] Phase 4 — Tool layer
 - [ ] Phase 5 — Agent orchestrator
 - [ ] Phase 6 — Approval workflow
 - [ ] Phase 7 — Audit log
